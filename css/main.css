@@ -1,0 +1,157 @@
+body {
+
+	background: linear-gradient(-45deg, #30302f, #91908d, #cccbc8);
+	background-size: 400% 400%;
+	animation: gradient 10s ease infinite;
+
+}
+
+ @keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+
+	50% {
+		background-position: 100% 50%;
+	}
+
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+.hide {
+    display: none;
+}
+
+.button {
+    border-radius: 50px;
+    font-size: 20px;
+    margin: 4px;
+    padding: 10px;
+    border-color: gray;
+    border-width: 2px;
+}
+
+.buttonMenu {
+  background-color: #fff;
+  width: 596px;
+  border-radius: 50px;
+}
+
+.switchMenu {
+  background-color: #fff;
+  border-radius: 50px;
+  width: auto;
+  margin-left:65%;
+  float: right;
+}
+
+/* Calculator */
+.input {
+    width: 300px;
+    height: 70px;
+    font-size: 20px;
+    border-radius: 7px;
+  }
+  
+.operand {
+  width: 40px;
+  height: 40px;
+  border-radius: 50px;
+  font-size: 15px;
+  font-weight: bold;
+}
+  
+.polyOperand {
+  width: 40px;
+  height: 40px;
+  border-radius: 50px;
+  font-size: 15px;
+  font-weight: bold;
+}
+  
+.operandScal {
+  width: 50px;
+  height: 40px;
+  border-radius: 17px;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.polyPointButton {
+  width: 120px;
+  height: 40px;
+  border-radius: 17px;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.res {
+  font-size: 30px;
+  font-weight: bolder;
+  margin-left: 130px;
+}
+
+.Calculator {
+  border: 3px solid black;
+  background: linear-gradient(-45deg, #30302f, #91908d, #cccbc8);
+    background-size: 400% 400%;
+    animation: gradient 10s ease infinite;
+  border-radius: 20px;
+  width: 700px;
+  padding: 5px;
+  padding-right: 5px;
+}
+
+.nameCalculator {
+  font-size: 30px;
+  font-family: Comic Sans MS, Comic Sans, cursive;
+  font-weight: 3px;
+}
+
+/* Graph2D */
+.graphOptions {
+    margin-top: 50px;
+    margin-left: 30% ;
+    display: flex;
+}
+
+.addFunction {
+    height: 30px;
+    width: 30px;
+}
+
+.border {
+    border: 5 px;
+    border-color: #000;
+}
+
+.functionColor {
+    height: 30px;
+    width: 50px;
+    margin-right: 10px;
+}
+
+.checkBoxText {
+    font-size: 30px;
+}
+
+/* Graph3D */
+
+.canvas3D {
+    margin-top: 50px;
+    margin-left: 30% ;
+    display: flex;
+    background-color: #efe;
+}
+
+.checkBox3D {
+  font-size: 30px;
+  font-family: Comic Sans MS, Comic Sans, cursive;
+}
+
+.color {
+  width: 30px;
+  height: 30px;
+}

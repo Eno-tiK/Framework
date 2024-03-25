@@ -1,0 +1,1 @@
+class RPG extends Component {}

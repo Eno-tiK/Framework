@@ -1,0 +1,1 @@
+class Shooting extends Component {}

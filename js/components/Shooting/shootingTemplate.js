@@ -1,0 +1,2 @@
+Template.prototype.shootingTemplate = () =>  
+    `Стрельба`;
