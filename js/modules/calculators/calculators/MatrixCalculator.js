@@ -37,7 +37,7 @@ class MatrixCalculator extends RealCalculator {
             }
             result.push(sum);
         }
-        return new Vector(result);
+        return new Matrix(result);
     }
 
     prod(a, p) {

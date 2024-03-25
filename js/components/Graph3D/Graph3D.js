@@ -33,21 +33,16 @@ class Graph3D extends Component {
         this.drawPolygon = true;
         this.colorPoints;
         this.colorEdges;
-        this.scene = this.solarSystem();
-
-        setInterval(() => {
-            this.scene.forEach(surface => surface.doAnimation(this.math3D));
-            this.renderScene();
-        }, 50);
-        
+        this.scene = this.SolarSystem();
         this.renderScene();
     }
 
     wheel(event) {
         const delta = (event.wheelDelta < 0) ? 0.9 : 1.1;
         const matrix = this.math3D.zoom(delta);
-        this.scene.forEach(surface => surface.points.forEach(point => this.math3D.transform(matrix, point))
-        );
+        this.scene.forEach(surface => surface.points.forEach((point) => {
+            this.math3D.transform(matrix, point);
+        }));
         this.renderScene();
     }
 
@@ -81,27 +76,32 @@ class Graph3D extends Component {
     renderScene() {
         this.graph.clear();
         if (this.scene) {
+            this.scene.forEach((surface, index) => {
             //Polygons
             if (this.drawPolygon) {
-                this.math3D.calcDistance(this.scene, this.win.camera, 'distance');
-                this.math3D.calcDistance(this.scene, this.light, 'lumen');
-                this.math3D.sortByArtistAlgorythm(this.scene);
-                this.scene.polygons.forEach(polygon => {
+                this.math3D.calcDistance(surface, this.win.camera, 'distance');
+                this.math3D.calcDistance(surface, this.light, 'lumen');
+                this.math3D.sortByArtistAlgorythm(surface);
+                surface.polygons.forEach(polygon => {
                     const points = polygon.points.map(index =>
-                        new Point(this.math3D.xs(this.scene.points[index]), this.math3D.ys(this.scene.points[index])));
+                        new Point(
+                            this.math3D.xs(surface.points[index]),
+                            this.math3D.ys(surface.points[index])
+                        )
+                    );
                     const lumen = this.math3D.calcIllumination(polygon.lumen, this.light.lumen);
                     let { r, g, b } = polygon.color;
                     r = Math.round(r * lumen);
                     g = Math.round(g * lumen);
                     b = Math.round(b * lumen);
                     this.graph.polygon(points, polygon.rgbToHex(r, g, b));
-                })
+                    })
             }
             //Edges
             if (this.drawEdges) {
-                this.scene.edges.forEach(edge => {
-                    const point1 = this.scene.points[edge.p1];
-                    const point2 = this.scene.points[edge.p2];
+                    surface.edges.forEach(edge => {
+                    const point1 = surface.points[edge.p1];
+                    const point2 = surface.points[edge.p2];
                     this.graph.line(
                         this.math3D.xs(point1),
                         this.math3D.ys(point1),
@@ -113,14 +113,13 @@ class Graph3D extends Component {
             }
             //Points
             if (this.drawPoint) {
-                this.scene.points.forEach(point => this.graph.point(
+                    surface.points.forEach(point => this.graph.point(
                     this.math3D.xs(point),
                     this.math3D.ys(point),
                     this.colorPoints
-                ));
-            };
-        }
-    }
+                ))};
+            });
+        }}
 
     addEventListeners() {
         //FigureSwitch
@@ -135,23 +134,68 @@ class Graph3D extends Component {
             }
         )
         document.getElementById('cube').addEventListener('click', () => {
-            this.scene = this.surface.cube();
+            this.scene = [];
+            this.scene.push(this.surface.cube())
             this.renderScene();
         })
         document.getElementById('sphere').addEventListener('click', () => {
-            this.scene = this.surface.sphere(10, 20);
+            this.scene = [];
+            this.scene.push(this.surface.sphere(10, 20))
             this.renderScene();
         })
         document.getElementById('bubalik').addEventListener('click', () => {
-            this.scene = this.surface.bubalik(20, 10, 2.5);
+            this.scene = [];
+            this.scene.push(this.surface.bubalik(20, 10, 2.5))
             this.renderScene();
         })
         document.getElementById('ellipsoid').addEventListener('click', () => {
-            this.scene = this.surface.ellipsoid(10, 20);
+            this.scene = [];
+            this.scene.push(this.surface.ellipsoid(10, 20))
             this.renderScene();
         })
         document.getElementById('cone').addEventListener('click', () => {
-            this.scene = this.surface.cone();
+            this.scene = [];
+            this.scene.push(this.surface.cone())
+            this.renderScene();
+        })
+        document.getElementById('gCilindr').addEventListener('click', () => {
+            this.scene = [];
+            this.scene.push(this.surface.cone())
+            this.renderScene();
+        })
+        document.getElementById('pCilindr').addEventListener('click', () => {
+            this.scene = [];
+            this.scene.push(this.surface.cone())
+            this.renderScene();
+        })
+        document.getElementById('eCilindr').addEventListener('click', () => {
+            this.scene = [];
+            this.scene.push(this.surface.cone())
+            this.renderScene();
+        })
+        document.getElementById('oneGiper').addEventListener('click', () => {
+            this.scene = [];
+            this.scene.push(this.surface.cone())
+            this.renderScene();
+        })
+        document.getElementById('twoGiper').addEventListener('click', () => {
+            this.scene = [];
+            this.scene.push(this.surface.cone())
+            this.renderScene();
+        })
+        document.getElementById('eParaboloid').addEventListener('click', () => {
+            this.scene = [];
+            this.scene.push(this.surface.cone())
+            this.renderScene();
+        })
+        document.getElementById('gParaboloide').addEventListener('click', () => {
+            this.scene = [];
+            this.scene.push(this.surface.cone())
+            this.renderScene();
+        })
+        document.getElementById('cleiiii').addEventListener('click', () => {
+            this.scene = [];
+            this.scene.push(this.surface.cone())
             this.renderScene();
         })
 
@@ -207,12 +251,12 @@ class Graph3D extends Component {
 
     }
 
-    solarSystem() {
-            const Earth = this.surface.sphere(10, 20);
-            Earth.addAnimation('rotateOy', 0.1);
-            const Moon = this.surface.cube();
-            Moon.addAnimation('rotateOx', 0.2);
-            Moon.addAnimation('rotateOz', 0.5, Earth.center);
-            return [Earth, Moon];
+    SolarSystem(){
+        const Earth = this.surface.sphere(10, 20);
+        Earth.addAnimation('rotateOy', 0.1, this.center);
+        const Moon = this.surface.cube();
+        Moon.addAnimation('rotateOx', 0.2);
+        Moon.addAnimation('rotateOx', 0.05);
+        return [Earth,Moon];
     }
 }

@@ -93,7 +93,7 @@ class Math3D {
     }
 
     calcDistance(surface, endPoint, name) {
-        surface.polygons.forEach(polygon => {
+        surface.polygons.forEach((polygon) => {
             let x = 0, y = 0, z = 0;
             polygon.points.forEach(index => {
                 x += surface.points[index].x;
@@ -123,16 +123,13 @@ class Math3D {
         point.y = result[1];
         point.z = result[2];
     }
-
     getTransform(...args) {
         return args.reduce(
             (s, t) => this.multMatrix(s, t),
-            [
-                [1, 0, 0, 0],
-                [0, 1, 0, 0],
-                [0, 0, 1, 0],
-                [0, 0, 0, 1]
-            ]
+            [[1, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 1]]
         );
     }
 }

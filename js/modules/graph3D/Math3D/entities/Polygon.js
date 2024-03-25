@@ -1,5 +1,5 @@
 class Polygon {
-    constructor(points = [], color = '#00ff00') {
+    constructor(points = [], color = '#AA98A9') {
         this.points = points;
         this.color = this.hexToRgb(color);
         this.distance = 0;
