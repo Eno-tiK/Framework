@@ -88,7 +88,7 @@ class Math3D {
         return [
             [Math.cos(alpha), Math.sin(alpha), 0, 0],
             [-Math.sin(alpha), Math.cos(alpha), 0, 0],
-            [0, 0, Math.cos(alpha), 0],
+            [0, 0, 1, 0],
             [0, 0, 0, 1]];
     }
 
@@ -118,11 +118,12 @@ class Math3D {
     }
 
     transform(matrix, point) {
-        const result = this.multPoint(matrix, [point.x, point.y, point.z]);
+        const result = this.multPoint(matrix, [point.x, point.y, point.z, 1]);
         point.x = result[0];
         point.y = result[1];
         point.z = result[2];
     }
+
     getTransform(...args) {
         return args.reduce(
             (s, t) => this.multMatrix(s, t),
