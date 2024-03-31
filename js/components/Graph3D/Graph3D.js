@@ -1,13 +1,13 @@
-window.requestAnimationFrame = (function () {
+window.requestAnimFrame = (function () {
     return window.requestAnimationFrame ||
-    window.webkitRequestAnimationFrame ||
-    window.mozRequestAnimationFrame ||
-    window.oRequestAnimationFrame ||
-    window.msRequestAnimationFrame ||
-    function (callbacks) {
-        window.setTimeout(callbacks, 1000 / 60)
-    }
-})
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function (callback) {
+            window.setTimeout(callback, 1000 / 60);
+        };
+})();
 
 class Graph3D extends Component {
     constructor(options) {
@@ -36,7 +36,7 @@ class Graph3D extends Component {
         });
         this.math3D = new Math3D(this.win);
         this.surface = new Surface();
-        this.light = new Light(-40, 15, 0, 1300);
+        this.light = new Light(-20, 0, -20, 1000);
 
         this.canMove = false;
         this.drawPoint = false;
@@ -50,21 +50,22 @@ class Graph3D extends Component {
             this.scene.forEach(surface => surface.doAnimation(this.math3D));
         }, 50);
 
-            let FPS = 0;
-            let countFPS = 0;
-            let timestamp = Date.now();
+        let FPS = 0;
+        let countFPS = 0;
+        let timestamp = Date.now();
 
-            const renderLoop = () => {
-                countFPS++;
-                const currentTimestamp = Date.now();
-                if(currentTimestamp - timestamp >= 1000) {
-                    FPS = countFPS;
-                    countFPS = 0;
-                    timestamp = currentTimestamp;
-                }
-                this.renderScene(FPS);
-                requestAnimationFrame(renderLoop);
+        const renderLoop = () => {
+            countFPS++;
+            const currentTimestamp = Date.now();
+            if (currentTimestamp - timestamp >= 1000) {
+                FPS = countFPS;
+                countFPS = 0;
+                timestamp = currentTimestamp;
             }
+            this.renderScene(FPS);
+            requestAnimationFrame(renderLoop);
+        }
+
         renderLoop();
     }
 
@@ -100,27 +101,35 @@ class Graph3D extends Component {
         }
         this.dx = event.offsetX;
         this.dy = event.offsetY;
-    }
+        }
 
     renderScene(FPS) {
+        console.log(FPS);
         this.graph.clear();
-        console.log(FPS)
         if (this.scene) {
             this.scene.forEach((surface, index) => {
                 //Polygons
                 if (this.drawPolygon) {
+                    const polygons = [];
+                    this.math3D.calcCenter(surface);
+                    this.math3D.calcRadius(surface);
                     this.math3D.calcDistance(surface, this.win.camera, 'distance');
                     this.math3D.calcDistance(surface, this.light, 'lumen');
+                    surface.polygons.forEach(polygon => {
+                        polygon.index = index;
+                        polygons.push(polygon);
+                    })
                     this.math3D.sortByArtistAlgorythm(surface);
                     surface.polygons.forEach(polygon => {
                         const points = polygon.points.map(index =>
                             new Point(
-                                this.math3D.xs(surface.points[index]),
-                                this.math3D.ys(surface.points[index])
+                                this.math3D.xs(this.scene[polygon.index].points[index]),
+                                this.math3D.ys(this.scene[polygon.index].points[index])
                             )
                         );
-                        const lumen = this.math3D.calcIllumination(polygon.lumen, this.light.lumen);
                         let { r, g, b } = polygon.color;
+                        const {isShadow, dark}  = this.math3D.calcShadow(polygon, this.scene, this.light);
+                        const lumen = this.math3D.calcIllumination(polygon.lumen, this.light.lumen * (isShadow ? dark: 1));
                         r = Math.round(r * lumen);
                         g = Math.round(g * lumen);
                         b = Math.round(b * lumen);
@@ -172,7 +181,7 @@ class Graph3D extends Component {
         })
         document.getElementById('sphere').addEventListener('click', () => {
             this.scene = [];
-            this.scene.push(this.surface.sphere(10, 20))
+            this.scene.push(this.surface.sphere())
             this.renderScene();
         })
         document.getElementById('bubalik').addEventListener('click', () => {
@@ -284,11 +293,11 @@ class Graph3D extends Component {
     }
 
     SolarSystem() {
-        const Earth = this.surface.sphere(10, 20);
-        Earth.addAnimation('rotateOy', 0.1);
-        const Moon = this.surface.cube();
-        Moon.addAnimation('rotateOx', 0.2);
+        const Earth = this.surface.sphere(new Point(-10, -5, -3), 4);
+        Earth.addAnimation('rotateOy', 0.05);
+        const Moon = this.surface.bubalik(20, 10, 2.5);
         Moon.addAnimation('rotateOx', 0.05);
+        Moon.addAnimation('rotateOy', 0.05);
         return [Earth, Moon];
     }
 }

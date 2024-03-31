@@ -1,87 +1,34 @@
-Surface.prototype.cone = () => {
-    const points = [];
-
-const edges = [];
-
-const polygons = [];
-
-
-const height = 1;
-
-const radius = 0.5;
-
-const slices = 32;
-
-const stacks = 16;
-
-
-const dt = Math.PI * 2 / slices;
-
-const dr = height / stacks;
-
-
-// Generate points
-for (let i = 0; i <= stacks; i++) {
-    for (let j = 0; j <= slices; j++) {
-        const angle = j * dt;
-        const x = radius * Math.cos(angle);
-        const z = radius * Math.sin(angle);
-        const y = i * dr;
-        if (i === 0) {
-            points.push(new Point(0, y, 0));
-        } else {
-            points.push(new Point(x, y, z));
+Surface.prototype.cone = (slices = 40, radius = 5) => {
+        const points = [];
+        const edges = [];
+        const polygons = [];
+        const height = radius * 1.5
+        points.push(new Point(0, 0, 0));
+      
+    
+        for (let i = 0; i < slices; i++) {
+          const theta = (i / slices) * Math.PI * 2;
+          const x = radius * Math.cos(theta);
+          const y = 0;
+          const z = radius * Math.sin(theta);
+          points.push(new Point(x, y, z));
         }
-    }
-}
-
-
-// Generate edges
-
-for (let i = 0; i < stacks; i++) {
-
-    for (let j = 0; j < slices; j++) {
-
-        const p1 = i * (slices + 1) + j;
-
-        const p2 = p1 + slices + 1;
-
-        const p3 = p2 + 1;
-
-        const p4 = p1 + 1;
-
-
-        edges.push(new Edge(p1, p2));
-
-        edges.push(new Edge(p2, p3));
-
-        edges.push(new Edge(p3, p4));
-
-        edges.push(new Edge(p4, p1));
-
-    }
-
-}
-
-
-// Generate polygons
-for (let i = 0; i < stacks; i++) {
-
-    for (let j = 0; j < slices; j++) {
-
-        const p1 = i * (slices + 1) + j;
-
-        const p2 = p1 + slices + 1;
-
-        const p3 = p2 + 1;
-
-        const p4 = p1 +1;
-
-
-        polygons.push(new Polygon([p1, p2, p3, p4]));
-
-    }
-
-}
-return new Surface(points, edges, polygons);
+    
+        points.push(new Point(0, height, 0));
+      
+        for (let i = 1; i <= slices; i++) {
+          edges.push(new Edge(i, (i % slices) + 1));
+          edges.push(new Edge((i % slices) + 1, points.length - 1));
+          polygons.push(
+            new Polygon([i, (i % slices) + 1, points.length - 1, points.length - 1])
+          );
+        }
+      
+        for (let i = 1; i <= slices; i++) {
+          edges.push(new Edge(0, i));
+          edges.push(new Edge(i, (i % slices) + 1));
+          polygons.push(new Polygon([0, i, (i % slices) + 1]));
+        }
+      
+        return new Surface(points, edges, polygons);
 }
