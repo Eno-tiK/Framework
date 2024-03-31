@@ -1,4 +1,4 @@
-Surface.prototype.bubalik = (count, R, r) => {
+Surface.prototype.bubalik = (count = 20, R = 10, r = 2.5) => {
     const points = [];
     const edges = [];
     const polygons = [];

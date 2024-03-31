@@ -1,38 +1,40 @@
-Surface.prototype.ellipsoid = (radius, count) => {
+Surface.prototype.ellipsoid = (
+    point = new Point(0, 0, 0),
+    radius = 10,
+    segments = 20
+) => {
+
+    const center = new Point(point.x, point.y, point.z)
     const points = [];
     const edges = [];
     const polygons = [];
-    const dt = Math.PI * 2 / count;
 
-    //points
-    for (let i = 0; i <= Math.PI; i += dt) {
-        for (let j = 0; j < Math.PI * 2; j += dt) {
-            const x = radius * Math.cos(j) * Math.sin(i);
-            const y = radius * Math.cos(i) * 0.5;
-            const z = radius * Math.sin(j) * Math.sin(i);
+    for (let i = 0; i <= segments; i++) {
+        const phi = (i / segments) * Math.PI;
+        const y = center.y + radius * Math.cos(phi) * 0.5;
+
+        for (let j = 0; j <= segments; j++) {
+            const theta = (j / segments) * (2 * Math.PI);
+            const x = center.x + radius * Math.sin(phi) * Math.cos(theta);
+            const z = center.z + radius * Math.sin(phi) * Math.sin(theta);
             points.push(new Point(x, y, z));
         }
     }
 
-    //edges
-    for (let i = 0; i < points.length; i++) {
-        if (i + 1 < points.length && (i + 1) % count !== 0) {
-            edges.push(new Edge(i, i + 1));
-        } else if ((i + 1) % count === 0) {
-            edges.push(new Edge(i, i + 1 - count));
-        }
-        if (i < points.length - count) {
-            edges.push(new Edge(i, i + count));
+    for (let i = 0; i < segments; i++) {
+        for (let j = 0; j < segments; j++) {
+            const p1 = i * (segments + 1) + j;
+            const p2 = p1 + 1;
+            const p3 = (i + 1) * (segments + 1) + j;
+            const p4 = p3 + 1;
+
+            edges.push(new Edge(p1, p2));
+            edges.push(new Edge(p2, p4));
+            edges.push(new Edge(p4, p3));
+            edges.push(new Edge(p3, p1));
+            polygons.push(new Polygon([p1, p2, p4, p3]));
         }
     }
 
-    //polygons
-    for (let i = 0; i < points.length; i++) {
-        if (i + 1 + count < points.length && (i + 1) % count !== 0) {
-            polygons.push(new Polygon([i, i + 1,i + 1 + count, i + count]));
-        } else if (i + count < points.length && (i + 1) % count === 0) {
-            polygons.push(new Polygon([i, i + 1 - count, i + 1, i + count]))
-        }
-    }
     return new Surface(points, edges, polygons);
 }

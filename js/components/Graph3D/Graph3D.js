@@ -36,20 +36,24 @@ class Graph3D extends Component {
         });
         this.math3D = new Math3D(this.win);
         this.surface = new Surface();
-        this.light = new Light(-20, 0, -20, 1000);
+        this.light = new Light(-20, 0, -20, 700);
 
         this.canMove = false;
         this.drawPoint = false;
         this.drawEdges = false;
         this.drawPolygon = true;
+        this.drawAnimation = false;
         this.colorPoints;
         this.colorEdges;
+
         this.scene = this.SolarSystem();
 
         setInterval(() => {
-            this.scene.forEach(surface => surface.doAnimation(this.math3D));
+            if(this.drawAnimation) {
+                this.scene.forEach(surface => surface.doAnimation(this.math3D));
+            }
         }, 50);
-
+        
         let FPS = 0;
         let countFPS = 0;
         let timestamp = Date.now();
@@ -104,8 +108,8 @@ class Graph3D extends Component {
         }
 
     renderScene(FPS) {
-        console.log(FPS);
         this.graph.clear();
+        document.getElementById('fpsCount').value = FPS;
         if (this.scene) {
             this.scene.forEach((surface, index) => {
                 //Polygons
@@ -163,93 +167,23 @@ class Graph3D extends Component {
     }
 
     addEventListeners() {
-        //FigureSwitch
-        document.getElementById('figureSwitch').addEventListener(
-            'click',
-            () => {
-                if (document.getElementById('figureSwitchMenu').classList.contains('hide')) {
-                    document.getElementById('figureSwitchMenu').classList.remove('hide')
-                } else {
-                    document.getElementById('figureSwitchMenu').classList.add('hide')
-                }
-            }
-        )
-        document.getElementById('cube').addEventListener('click', () => {
-            this.scene = [];
-            this.scene.push(this.surface.cube())
-            this.renderScene();
-        })
-        document.getElementById('sphere').addEventListener('click', () => {
-            this.scene = [];
-            this.scene.push(this.surface.sphere())
-            this.renderScene();
-        })
-        document.getElementById('bubalik').addEventListener('click', () => {
-            this.scene = [];
-            this.scene.push(this.surface.bubalik(20, 10, 2.5))
-            this.renderScene();
-        })
-        document.getElementById('ellipsoid').addEventListener('click', () => {
-            this.scene = [];
-            this.scene.push(this.surface.ellipsoid(10, 20))
-            this.renderScene();
-        })
-        document.getElementById('cone').addEventListener('click', () => {
-            this.scene = [];
-            this.scene.push(this.surface.cone())
-            this.renderScene();
-        })
-        document.getElementById('gCilindr').addEventListener('click', () => {
-            this.scene = [];
-            this.scene.push(this.surface.cone())
-            this.renderScene();
-        })
-        document.getElementById('pCilindr').addEventListener('click', () => {
-            this.scene = [];
-            this.scene.push(this.surface.cone())
-            this.renderScene();
-        })
-        document.getElementById('eCilindr').addEventListener('click', () => {
-            this.scene = [];
-            this.scene.push(this.surface.cone())
-            this.renderScene();
-        })
-        document.getElementById('oneGiper').addEventListener('click', () => {
-            this.scene = [];
-            this.scene.push(this.surface.cone())
-            this.renderScene();
-        })
-        document.getElementById('twoGiper').addEventListener('click', () => {
-            this.scene = [];
-            this.scene.push(this.surface.cone())
-            this.renderScene();
-        })
-        document.getElementById('eParaboloid').addEventListener('click', () => {
-            this.scene = [];
-            this.scene.push(this.surface.cone())
-            this.renderScene();
-        })
-        document.getElementById('gParaboloide').addEventListener('click', () => {
-            this.scene = [];
-            this.scene.push(this.surface.cone())
-            this.renderScene();
-        })
-        document.getElementById('cleiiii').addEventListener('click', () => {
-            this.scene = [];
-            this.scene.push(this.surface.cone())
-            this.renderScene();
-        })
-
+        document.getElementById("SelectSurface")
+            .addEventListener("change", (event) => {
+                this.scene = [(new Surface)[event.target.value]()];
+            });
+        document.querySelectorAll('.surfaceCustom').forEach(input =>
+            input.addEventListener("input", (event) => {
+                this[event.target.dataset.custom] = event.target.checked;
+            })
+        );
         //ColorChanger
         document.getElementById('pointColor').addEventListener('change', () => {
             this.colorPoints = document.getElementById('pointColor').value;
             this.colorEdges = document.getElementById('edgeColor').value;
-            this.renderScene();
         })
         document.getElementById('edgeColor').addEventListener('change', () => {
             this.colorPoints = document.getElementById('pointColor').value;
             this.colorEdges = document.getElementById('edgeColor').value;
-            this.renderScene();
         })
 
         //CheckBoxDraw
@@ -258,10 +192,8 @@ class Graph3D extends Component {
             () => {
                 if (document.getElementById('showPoints').checked) {
                     this.drawPoint = true;
-                    this.renderScene();
                 } else {
                     this.drawPoint = false;
-                    this.renderScene();
                 }
             }
         )
@@ -270,10 +202,8 @@ class Graph3D extends Component {
             () => {
                 if (document.getElementById('showEdges').checked) {
                     this.drawEdges = true;
-                    this.renderScene();
                 } else {
                     this.drawEdges = false;
-                    this.renderScene();
                 }
             }
         )
@@ -282,10 +212,18 @@ class Graph3D extends Component {
             () => {
                 if (document.getElementById('showPolygons').checked) {
                     this.drawPolygon = true;
-                    this.renderScene();
                 } else {
                     this.drawPolygon = false;
-                    this.renderScene();
+                }
+            }
+        )
+        document.getElementById('drawAnimation').addEventListener(
+            'click',
+            () => {
+                if (document.getElementById('drawAnimation').checked) {
+                    this.drawAnimation = true;
+                } else {
+                    this.drawAnimation = false;
                 }
             }
         )
@@ -293,11 +231,15 @@ class Graph3D extends Component {
     }
 
     SolarSystem() {
-        const Earth = this.surface.sphere(new Point(-10, -5, -3), 4);
-        Earth.addAnimation('rotateOy', 0.05);
-        const Moon = this.surface.bubalik(20, 10, 2.5);
-        Moon.addAnimation('rotateOx', 0.05);
-        Moon.addAnimation('rotateOy', 0.05);
-        return [Earth, Moon];
+        const Moon = this.surface.cube(new Point(10, -1, 0), 2);
+        const Mars = this.surface.ellipsoid(new Point(-10, 1, 0), 4);
+        const Earth = this.surface.sphere(new Point(0,0,0), 4);
+        Moon.addAnimation('rotateOy', 0.1);
+        Moon.addAnimation('rotateOz', 0.1);
+        Moon.addAnimation('rotateOx', 0.1);
+        Mars.addAnimation('rotateOy', -0.1);
+        Mars.addAnimation('rotateOz', -0.1);
+        Mars.addAnimation('rotateOx', -0.1);
+        return [Moon, Mars, Earth];
     }
 }

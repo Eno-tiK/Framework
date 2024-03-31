@@ -4,7 +4,8 @@ Surface.prototype.sphere =
         radius = 10,
         segments = 20
     ) => {
-        const center = new Point(point.x, point.y+radius, point.z)
+
+        const center = new Point(point.x, point.y, point.z)
         const points = [];
         const edges = [];
         const polygons = [];
